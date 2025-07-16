@@ -10,6 +10,6 @@ Copy Column 3 from all spreadsheets in Folder Y → Combine them as separate col
 │   └── run_script.py    ← Script goes here  
 │   └── Spreadsheet Y.xlsx  ← This will be created by the script  
     └── Folder Y  
-      ├── spreadsheet_1.xlsx  
-      ├── spreadsheet_2.xlsx  
-      └── spreadsheet_3.xlsx  
+       ├── spreadsheet_1.xlsx  
+       ├── spreadsheet_2.xlsx  
+       └── spreadsheet_3.xlsx  
