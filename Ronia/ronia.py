@@ -47,11 +47,15 @@ print("")
 response = input("Have results been loaded into Folder Y? [Y]/N: ").strip().lower()
 
 if response in ["n", "no"]:
-    print("Exiting...")
+    print("")
+    print("Stopping Script...")
+    print("")
+    print("-" * 30)
     exit(0)
 else:
     print("")
     print("Processing...")
+    print("")
     
 
 # Checking if excel files are present and list them.
@@ -64,7 +68,10 @@ for root, dirs, files in os.walk(folder_y):
 
 
 if not excel_files:
-    print("No Excel files found in Folder Y. Exiting.")
+    print("No Excel files found in Folder Y.")
+    print("")
+    print("Stopping Script.")
+    print("-" * 30)
     exit(0)
 
 # My for loop for iterating through all spreadsheets.
