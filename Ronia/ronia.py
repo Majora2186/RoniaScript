@@ -32,25 +32,17 @@ folder_y = os.path.join(folder_x, "Folder Y")
 output_path = os.path.join(folder_x, "Spreadsheet Y.xlsx")
 
 # This is temporarily displaying the path of both folders for debugging.
-# print("Folder x ="+folder_x)
-# print("Folder y ="+folder_y)
+#print("Folder x ="+folder_x)
+#print("Folder y ="+folder_y)
 print("")
 
 if not os.path.isdir(folder_y):
     os.makedirs(folder_y, exist_ok=True)
-    #print("Folder Y has been created")
-    #print("")
-#else:
-    #print(f"Folder Y already present at {folder_y}")
-    #print("")
-
+    
 print("-" * 30)
 print("Steve's Ronia Results Script")
 print("-" * 30)
 print("")
-
-
-
 
 response = input("Have results been loaded into Folder Y? [Y]/N: ").strip().lower()
 
@@ -59,7 +51,7 @@ if response in ["n", "no"]:
     exit(0)
 else:
     print("")
-    print("Continuing...")
+    print("Processing...")
     
 
 # Checking if excel files are present and list them.
@@ -79,8 +71,8 @@ if not excel_files:
 combined_df = pd.DataFrame()
 
 for file_path in excel_files:
-    #print(f"Processing: {file_path}")
-
+    print('.', end='', flush=True)
+    
     df = pd.read_csv(file_path, usecols=[2])
 
     # Use just the filename (without extension) as column name
@@ -89,10 +81,12 @@ for file_path in excel_files:
 
     combined_df = pd.concat([combined_df, df], axis=1)
 
-
+print("")
 print(f"\nTotal spreadsheets processed: {len(excel_files)}")
+print("")
+print("Creating Excel File...")
 
-#print(combined_df)
+
 # Put the dataframe into an excel spreadsheet
 combined_df.to_excel(output_path, index=False)
 print("")
