@@ -17,6 +17,7 @@
 import os
 import sys
 import subprocess
+import openpyxl
 
 #--- Dependency check section ---
 # required_packages = ["openpyxl", "os", "sys", "subprocess"]
@@ -65,7 +66,7 @@ response = input("Have results been loaded into Folder Y? [Y]/N: ").strip().lowe
 
 if response in ["n", "no"]:
     print("")
-    print("Stopping Script...")
+    print("Load results and then re-run script. Stopping...")
     print("")
     print("-" * 30)
     exit(0)
