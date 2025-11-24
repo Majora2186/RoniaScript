@@ -14,18 +14,21 @@
     ├── spreadsheet_2.xlsx
     └── spreadsheet_3.xlsx
 """
+import os
+import sys
+import subprocess
 
-# --- Dependency check section ---
-required_packages = ["openpyxl", "os", "sys", "subprocess"]
+#--- Dependency check section ---
+# required_packages = ["openpyxl", "os", "sys", "subprocess"]
 
-for package in required_packages:
-    try:
-        __import__(package)
-        print(f"✅ {package} is already installed.")
-    except ImportError:
-        print(f"📦 {package} not found. Installing...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-        print(f"✅ {package} installed successfully.")
+# for package in required_packages:
+#     try:
+#         __import__(package)
+#         print(f"✅ {package} is already installed.")
+#     except ImportError:
+#         print(f"📦 {package} not found. Installing...")
+#         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+#         print(f"✅ {package} installed successfully.")
 
 
 
