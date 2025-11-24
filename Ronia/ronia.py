@@ -90,7 +90,9 @@ if not excel_files:
     print("")
     print("Stopping Script.")
     print("-" * 30)
-    exit(0)
+    input("Press Enter to exit...")
+    sys.exit(0)
+
 
 # My for loop for iterating through all spreadsheets.
 combined_df = pd.DataFrame()
