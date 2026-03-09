@@ -106,6 +106,7 @@ for file_path in excel_files:
     folder_name = os.path.basename(os.path.dirname(file_path))
     df.columns = [folder_name]
 
+    # This is my silent fail line.
     combined_df = pd.concat([combined_df, df], axis=1)
 
 print("")
