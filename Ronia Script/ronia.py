@@ -46,7 +46,7 @@ import urllib.request
 #         print(f"✅ {package} installed successfully.")
 
 
-
+ENABLE_UPDATES = False  # Set to True to allow GitHub updates
 
 # This checks if the sysem is windows or linux and clears the script.
 os.system('cls' if os.name == 'nt' else 'clear')
@@ -72,7 +72,8 @@ def update()
 except Exception as e:
     pass
 
-print("-" * 30)
+if ENABLE_UPDATES:
+    update()
 
 
 # Define Folder X as the directory where the script is located.
