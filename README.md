@@ -27,3 +27,5 @@ The Ronia Results Compiler is a Python automation tool designed to streamline th
 * **Error: "Missing 'result.json' companion file"**
   * **Cause:** The script found a stray file or an incomplete folder inside the `Raw Data` directory. 
   * **Fix:** Open the `Raw Data` folder and remove any files that are not valid result folders. Ensure every folder inside contains a `result.json` file.
+
+Script created by Steve Carter in 2026. 
