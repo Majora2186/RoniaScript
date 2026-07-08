@@ -20,20 +20,13 @@
 import os
 import sys
 import shutil
-
-# Brings in Python's standard tool for reading and parsing
-import json
-
-# For adding the current date and time to the Compiled Ronia results spreadsheet
-from datetime import datetime
+import json  # Brings in Python's standard tool for reading and parsing
+from datetime import (
+    datetime,
+)  # For adding the current date and time to the Compiled Ronia results spreadsheet
 import pandas as pd
-
-# Not sure if I need to set pandas as pd somehow seperately as it gets installed through my loop above or whether it will just work.
-# Glob is used to find files with wildcards.
-import glob
-
-# The below is used to autoupdate
-import urllib.request
+import glob  # Glob is used to find files with wildcards.
+import urllib.request  # Used to autoupdate
 
 # --- Dependency check section ---
 # required_packages = ["openpyxl", "os", "sys", "subprocess", "openpyxl", "shutil"]
