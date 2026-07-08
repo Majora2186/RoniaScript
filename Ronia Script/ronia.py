@@ -69,8 +69,8 @@ def update():
             with open(__file__, 'w', encoding='utf-8') as current_file:
                 current_file.write(latest_code)
         
-except Exception as e:
-    pass
+    except Exception as e:
+        pass
 
 if ENABLE_UPDATES:
     update()
@@ -82,6 +82,9 @@ folder_x = os.path.dirname(os.path.abspath(__file__))
 raw_data = os.path.join(folder_x, "Raw Data")
 # Define the path to the excel template file, so that it can be copied later
 template_path = os.path.join(folder_x, "template.xlsx")
+# Create a Compiled Result Folder if not present.
+compiled_dir = os.path.join(folder_x, "Compiled Results")
+os.makedirs(compiled_dir, exist_ok=True)
 
 # This is temporarily displaying the path of both folders for debugging.
 #print("Folder x ="+folder_x)
@@ -92,7 +95,7 @@ if not os.path.isdir(raw_data):
     os.makedirs(raw_data, exist_ok=True)
     
 print("-" * 30)
-print("Steve's Ronia Results Script")
+print("Solus Ronia Compiler")
 print("-" * 30)
 print("")
 
@@ -229,7 +232,7 @@ for i in range(0, total_results, 40):
     
     # 3. Create dynamic filename and path
     batch_filename = f"Compiled Ronia Results - {current_time} - Part {part_num}.xlsx"
-    batch_output_path = os.path.join(folder_x, batch_filename)
+    batch_output_path = os.path.join(compiled_dir, batch_filename)
     
     # 4. Copy template and paste the chunk
     shutil.copy(template_path, batch_output_path)
@@ -240,7 +243,8 @@ for i in range(0, total_results, 40):
 print("")
 print("Process complete.")
 print("Script closing.")
-
+print("")
+print("Created by Steve Carter.")
 # Delete and replace Compiled Ronia Results
 shutil.rmtree(raw_data)
 os.makedirs(raw_data, exist_ok=True)
