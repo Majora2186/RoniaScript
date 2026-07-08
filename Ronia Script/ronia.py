@@ -51,25 +51,26 @@ import urllib.request
 # This checks if the sysem is windows or linux and clears the script.
 os.system('cls' if os.name == 'nt' else 'clear')
 
-# --- GitHub Auto-Update ---
-github_raw_url = "https://raw.githubusercontent.com/Majora2186/RoniaScript/refs/heads/main/Ronia%20Script/ronia.py"
+def update()
+    # --- GitHub Auto-Update ---
+    github_raw_url = "https://raw.githubusercontent.com/Majora2186/RoniaScript/refs/heads/main/Ronia%20Script/ronia.py"
 
-try:
-    # 1. Download the latest code
-    with urllib.request.urlopen(github_raw_url) as response:
-        latest_code = response.read().decode('utf-8')
-    
-    # 2. Read the current file's code
-    with open(__file__, 'r', encoding='utf-8') as current_file:
-        current_code = current_file.read()
+    try:
+        # 1. Download the latest code
+        with urllib.request.urlopen(github_raw_url) as response:
+            latest_code = response.read().decode('utf-8')
+        
+        # 2. Read the current file's code
+        with open(__file__, 'r', encoding='utf-8') as current_file:
+            current_code = current_file.read()
 
-    # 3. Compare and replace if different
-    if latest_code != current_code:
-        with open(__file__, 'w', encoding='utf-8') as current_file:
-            current_file.write(latest_code)
+        # 3. Compare and replace if different
+        if latest_code != current_code:
+            with open(__file__, 'w', encoding='utf-8') as current_file:
+                current_file.write(latest_code)
         
 except Exception as e:
-    print(f"⚠️ Could not check for updates (No internet or bad URL). Continuing with current version...")
+    pass
 
 print("-" * 30)
 
