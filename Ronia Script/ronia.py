@@ -51,7 +51,7 @@ ENABLE_UPDATES = False  # Set to True to allow GitHub updates
 # This checks if the sysem is windows or linux and clears the script.
 os.system('cls' if os.name == 'nt' else 'clear')
 
-def update()
+def update():
     # --- GitHub Auto-Update ---
     github_raw_url = "https://raw.githubusercontent.com/Majora2186/RoniaScript/refs/heads/main/Ronia%20Script/ronia.py"
 
