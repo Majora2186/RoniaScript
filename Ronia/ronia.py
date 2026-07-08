@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
- Copy Column 3 from all spreadsheets in Folder Y → Combine them as separate 
+ Copy Column 3 from all spreadsheets in Raw Data → Combine them as separate 
  columns into a copy of the template spreadsheet (Compiled Ronia Results) in Folder X.
  
  Parent Folder
@@ -10,7 +10,7 @@
 │   └── Compiled Ronia Results.xlsx  ← This will be created by the script.
 │   └── template.xlsx  ← This is the template that the data is pasted into.
 │
-└── Folder Y
+└── Raw Data
     ├── spreadsheet_1.xlsx
     ├── spreadsheet_2.xlsx
     └── spreadsheet_3.xlsx
@@ -49,25 +49,25 @@ os.system('cls' if os.name == 'nt' else 'clear')
 
 # Define Folder X as the directory where the script is located.
 folder_x = os.path.dirname(os.path.abspath(__file__))
-# This is a variable to store the location of Folder Y but it hasn't yet been created.
-folder_y = os.path.join(folder_x, "Folder Y")
+# This is a variable to store the location of Raw Data but it hasn't yet been created.
+raw_data = os.path.join(folder_x, "Raw Data")
 # Define the path to the excel template file, so that it can be copied later
 template_path = os.path.join(folder_x, "template.xlsx")
 
 # This is temporarily displaying the path of both folders for debugging.
 #print("Folder x ="+folder_x)
-#print("Folder y ="+folder_y)
+#print("Raw Data ="+raw_data)
 print("")
 
-if not os.path.isdir(folder_y):
-    os.makedirs(folder_y, exist_ok=True)
+if not os.path.isdir(raw_data):
+    os.makedirs(raw_data, exist_ok=True)
     
 print("-" * 30)
 print("Steve's Ronia Results Script")
 print("-" * 30)
 print("")
 
-response = input("Are results loaded?\nWARNING: All files in Folder Y will be permanently DELETED after processing.\nContinue? [Y]/N: ").strip().lower()
+response = input("Are results loaded?\nWARNING: All files in Raw Data will be permanently DELETED after processing.\nContinue? [Y]/N: ").strip().lower()
 
 if response in ["n", "no"]:
     print("")
@@ -84,14 +84,14 @@ else:
 # Checking if excel files are present and list them.
 excel_files = []
 
-for root, dirs, files in os.walk(folder_y):
+for root, dirs, files in os.walk(raw_data):
     for file in files:
         if file.endswith('.csv'):
             excel_files.append(os.path.join(root, file))
 
 
 if not excel_files:
-    print("No Excel files found in Folder Y.")
+    print("No Excel files found in Raw Data.")
     print("")
     print("Stopping Script.")
     print("-" * 30)
@@ -104,13 +104,23 @@ combined_df = pd.DataFrame()
 
 # This is the line that creates dots for each file worked on.
 for file_path in excel_files:
-    print('.', end='', flush=True)
+    print('*', end='', flush=True)
     
     # I think this is where the data is extracted or at least read. This comment can be verified with an Ai.
     csv_df = pd.read_csv(file_path, usecols=[2])
     csv_df.columns = [0]
     # Find the json file in the folder
     json_path = os.path.join(os.path.dirname(file_path), 'result.json')
+    # Error if extra files found
+    if not os.path.exists(json_path):
+        print("")
+        print("")
+        print(f"Stray file found in: {os.path.dirname(file_path)}")
+        print("")
+        print("Please clear 'Raw Data' of invalid files and try again.")
+        print("Safely exiting script.")
+        print("-" * 30)
+        sys.exit(1)
     # Open file and give python the ability to read it.
     with open(json_path, 'r') as json_file:
         # Reads the raw text from the file and translates it into a Python "dictionary". Save into the variable json_data.
@@ -140,17 +150,10 @@ for file_path in excel_files:
         combined_df = pd.concat([combined_df, single_result_column], axis=1)
 
 
-
-    # Use just the filename (without extension) as column name
-    # Currently commented out because we no longer do this but left in JIC.
-    #folder_name = os.path.basename(os.path.dirname(file_path))
-    #df.columns = [folder_name]
-
-
 print("")
 print(f"\nTotal spreadsheets processed: {len(excel_files)}")
 print("")
-print("Creating Excel File...")
+
 
 
 # Put the dataframe into an excel spreadsheet
@@ -161,10 +164,12 @@ print("Creating Excel File...")
 # 1. Get current time and total number of results
 current_time = datetime.now().strftime("%d %b %y - %H.%M")
 total_results = combined_df.shape[1]
+total_parts = len(range(0, total_results, 40))
 
 # 2. Loop through the results in chunks of 40
 for i in range(0, total_results, 40):
     part_num = (i // 40) + 1
+    print(f"Exporting to Excel {part_num}/{total_parts}")
     chunk_df = combined_df.iloc[:, i:i+40]
     
     # 3. Create dynamic filename and path
@@ -179,9 +184,10 @@ for i in range(0, total_results, 40):
 
 print("")
 print("Process complete")
+print("Script closing")
 
 # Delete and replace Compiled Ronia Results
-shutil.rmtree(folder_y)
-os.makedirs(folder_y, exist_ok=True)
+shutil.rmtree(raw_data)
+os.makedirs(raw_data, exist_ok=True)
 
 print("-" * 30)
