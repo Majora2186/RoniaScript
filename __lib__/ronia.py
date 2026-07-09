@@ -30,7 +30,7 @@ import urllib.request  # Used to autoupdate
 def github_update():
     """Checks GitHub for script updates."""
     # Tell the script where to the dev.py file in the same folder.
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     dev_file_path = os.path.join(script_dir, ".dev")
 
     if os.path.exists(dev_file_path):
@@ -55,14 +55,16 @@ def github_update():
 
 def setup_environment():
     """Sets up the necessary folders and files."""
-    # Define Folder X as the directory where the script is located.
-    folder_x = os.path.dirname(os.path.abspath(__file__))
-    # This is a variable to store the location of Raw Data but it hasn't yet been created.
-    raw_data = os.path.join(folder_x, "Raw Data")
-    # Define the path to the excel template file, so that it can be copied later
-    template_path = os.path.join(folder_x, "template.xlsx")
-    # Create a Compiled Result Folder if not present.
-    compiled_dir = os.path.join(folder_x, "Compiled Results")
+    # 1. This is where the script itself lives (the basement)
+    lib_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # 2. This is the root folder (the ground floor)
+    root_dir = os.path.dirname(lib_dir)
+
+    # 3. Path variables
+    raw_data = os.path.join(root_dir, "Raw Data")
+    template_path = os.path.join(lib_dir, "template.xlsx")
+    compiled_dir = os.path.join(root_dir, "Compiled Results")
 
     for directory in [raw_data, compiled_dir]:
         if not os.path.exists(directory):
