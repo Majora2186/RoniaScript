@@ -1,19 +1,6 @@
 # -*- coding: utf-8 -*-
 """
- Copy Column 3 from all spreadsheets in Raw Data → Combine them as separate
- columns into a copy of the template spreadsheet (Compiled Ronia Results) in Folder X.
-
- Parent Folder
-│
-├── Folder X
-│   └── run_script.py    ← Script goes here.
-│   └── Compiled Ronia Results.xlsx  ← This will be created by the script.
-│   └── template.xlsx  ← This is the template that the data is pasted into.
-│
-└── Raw Data
-    ├── spreadsheet_1.xlsx
-    ├── spreadsheet_2.xlsx
-    └── spreadsheet_3.xlsx
+Needs updating
 """
 
 import os  # Import os to manipulate files and folders and pandas for Spreadsheets
@@ -231,6 +218,9 @@ def export_results(combined_df, total_files, template_path, compiled_dir, raw_da
     print("Script closing.")
     print("")
     print("Created by Steve Carter.")
+    print("-" * 30)
+    print("")
+
     # Delete and replace Compiled Ronia Results
     shutil.rmtree(raw_data)
     os.makedirs(raw_data, exist_ok=True)
