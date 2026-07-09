@@ -16,6 +16,8 @@
     └── spreadsheet_3.xlsx
 """
 
+Robert Edwards
+
 # Import os to manipulate files and folders and pandas for Spreadsheets
 import os
 import sys
@@ -41,36 +43,28 @@ import urllib.request  # Used to autoupdate
 #         print(f"✅ {package} installed successfully.")
 
 
-ENABLE_UPDATES = False  # Set to True to allow GitHub updates
+def github_update():
+    """Checks GitHub for script updates."""
+    ENABLE_UPDATES = False  # Set to True to allow GitHub updates
 
-# This checks if the sysem is windows or linux and clears the script.
-os.system("cls" if os.name == "nt" else "clear")
+    if not ENABLE_UPDATES:
+        return
 
-
-def update():
-    # --- GitHub Auto-Update ---
     github_raw_url = "https://raw.githubusercontent.com/Majora2186/RoniaScript/refs/heads/main/Ronia%20Script/ronia.py"
 
     try:
-        # 1. Download the latest code
         with urllib.request.urlopen(github_raw_url) as response:
             latest_code = response.read().decode("utf-8")
 
-        # 2. Read the current file's code
         with open(__file__, "r", encoding="utf-8") as current_file:
             current_code = current_file.read()
 
-        # 3. Compare and replace if different
         if latest_code != current_code:
             with open(__file__, "w", encoding="utf-8") as current_file:
                 current_file.write(latest_code)
 
     except Exception:
         pass
-
-
-if ENABLE_UPDATES:
-    update()
 
 
 # Define Folder X as the directory where the script is located.
@@ -272,3 +266,14 @@ shutil.rmtree(raw_data)
 os.makedirs(raw_data, exist_ok=True)
 
 print("-" * 30)
+
+
+def main():
+    # This checks if the sysem is windows or linux and clears the script.
+    os.system("cls" if os.name == "nt" else "clear")
+    github_update()
+    pass
+
+
+if __name__ == "__main__":
+    main()
