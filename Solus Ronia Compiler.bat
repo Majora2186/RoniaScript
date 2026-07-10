@@ -1,3 +1,3 @@
 @echo off
-python ronia.py
+python __lib__\ronia.py
 pause

@@ -13,6 +13,8 @@ from datetime import (
 import pandas as pd
 import glob  # Glob is used to find files with wildcards.
 import urllib.request  # Used to autoupdate
+import subprocess  # Used to search for Ronia unit.
+import msvcrt  # Used to get single keypress for mode selection.
 
 # --- Dependency check section ---
 # required_packages = ["openpyxl", "os", "sys", "subprocess", "openpyxl", "shutil"]
@@ -72,6 +74,54 @@ def setup_environment():
 
     return raw_data, template_path, compiled_dir
     # folder_x is not returned as it is only used inside this variable to define the other variables. It is not needed outside of this function.
+
+
+def find_drive_by_name(target_name):
+    """Searches connected drives for a specific volume name."""
+    # This function uses the Windows Management Instrumentation Command-line (WMIC) to get a list of logical drives
+    # and their volume names. It then checks if the target name is present in any of the volume names and returns the corresponding drive letter if found.
+    print(f"\nSearching for drive named '{target_name}'...")
+    try:
+        # Asks Windows for a list of drive letters and their names
+        output = subprocess.check_output(
+            ["wmic", "logicaldisk", "get", "caption,volumename"], text=True
+        )
+        for line in output.splitlines():
+            if target_name.lower() in line.lower():
+                # Splits the line and grabs the first part (e.g., "E:")
+                drive_letter = line.split()[0]
+                print(f"Drive found at {drive_letter}")
+                return drive_letter
+    except Exception as e:
+        print(f"Error searching for drives: {e}")
+
+    print("Drive not found.")
+    return None
+
+
+def get_mode_selection():
+    """Prompts the user for Auto/Manual mode via single keypress."""
+    print("Select retrieval mode:")
+    print("[1] Automatic (Retrieve from Instrument Drive)")
+    print("[2] Manual (Files already loaded in Raw Data)")
+
+    while True:
+        # getch() pauses the script until a key is pressed
+        key = msvcrt.getch()
+        try:
+            char = key.decode("utf-8")
+            if char in ["1", "2"]:
+                return char
+        except UnicodeDecodeError:
+            pass  # Ignore special keys like arrows for now
+
+
+def auto_copy_data(drive_letter, raw_data):
+    """Copies all contents from the target drive to Raw Data."""
+    print("Copying files to Raw Data...")
+    # shutil.copytree requires the destination to not exist, or dirs_exist_ok=True
+    shutil.copytree(drive_letter, raw_data, dirs_exist_ok=True)
+    print("Copy complete.")
 
 
 def cleanup(raw_data):
@@ -139,10 +189,10 @@ def process_files(raw_data):
             cassette_code = json_data.get("cassetteIdentifierCode", "")
             lot_code = json_data.get("lotCode", "")
 
-            # Extract nested data points
-            protocol_name = json_data.get("protocol", {}).get("name", "")
-            protocol_version = json_data.get("protocol", {}).get("version", "")
-            result_val = json_data.get("result", {}).get("value", "")
+            # Extract nested data points safely (handles null values)
+            protocol_name = (json_data.get("protocol") or {}).get("name", "")
+            protocol_version = (json_data.get("protocol") or {}).get("version", "")
+            result_val = (json_data.get("result") or {}).get("value", "")
 
             # Extract raw endTime for future splitting
             raw_end_time = json_data.get("endTime", "")
@@ -183,7 +233,7 @@ def process_files(raw_data):
     return combined_df, len(excel_files)
 
 
-def export_results(combined_df, total_files, template_path, compiled_dir, raw_data):
+def export_results(combined_df, template_path, compiled_dir, raw_data):
     """Exports the compiled dataframe into chunked Excel templates and resets Raw Data."""
     # 1. Get current time and total number of results
     current_time = datetime.now().strftime("%d %b %y - %H.%M")
@@ -219,7 +269,7 @@ def export_results(combined_df, total_files, template_path, compiled_dir, raw_da
     print("Process complete.")
     print("Script closing.")
     print("")
-    print("Created by Steve Carter.")
+    # print("Created by Steve Carter.")
     print("-" * 30)
     print("")
 
@@ -247,32 +297,40 @@ def main():
     print("-" * 30)
     print("")
 
-    response = (
-        input(
-            "Are results loaded?\nWARNING: All files in Raw Data will be permanently DELETED after processing.\nContinue? [Y]/N: "
-        )
-        .strip()
-        .lower()
-    )
+    mode = get_mode_selection()
 
-    if response in ["n", "no"]:
-        print("")
-        print("Load results and then re-run script. Stopping...")
-        print("")
-        print("-" * 30)
-        sys.exit(0)
+    if mode == "1":
+        target_drive_name = "RESULTS"
+        drive_letter = find_drive_by_name(target_drive_name)
+
+        if drive_letter:
+            auto_copy_data(drive_letter + "\\", raw_data)
+        else:
+            print("Cannot proceed automatically. Please load files manually.")
+            mode = "2"  # Switch to manual mode if drive not found.
     else:
-        print("")
-        print("Processing...")
-        print("")
+        print("\nManual mode selected. Ensure files are in Raw Data.")
 
-        cleanup(raw_data)
-        combined_df, total_files = process_files(raw_data)
+    if mode == "2":
+        print(
+            "\nWARNING: All files in Raw Data will be permanently DELETED after processing."
+        )
+        # We can keep a simple standard input here just to confirm they are ready to nuke the folder
+        ready = input("Continue? [Y]/N: ").strip().lower()
+        if ready in ["n", "no"]:
+            sys.exit(0)
+
+    print("")
+    print("Processing...")
+    print("")
+
+    cleanup(raw_data)
+    combined_df, total_files = process_files(raw_data)
     print("")
     print(f"\nTotal spreadsheets processed: {total_files}")
     print("")
     print("-" * 30)
-    export_results(combined_df, total_files, template_path, compiled_dir, raw_data)
+    export_results(combined_df, template_path, compiled_dir, raw_data)
 
 
 if __name__ == "__main__":
