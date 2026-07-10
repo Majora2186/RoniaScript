@@ -278,6 +278,95 @@ def export_results(combined_df, template_path, compiled_dir, raw_data):
     os.makedirs(raw_data, exist_ok=True)
 
 
+def get_available_months(raw_data):
+    """Scans JSON files in Raw Data and groups directories by month."""
+    print("")
+    print("Scanning copied files for dates...")
+    month_data = {}
+
+    for root, dirs, files in os.walk(raw_data):
+        if "result.json" in files:
+            json_path = os.path.join(root, "result.json")
+            try:
+                with open(json_path, "r") as f:
+                    data = json.load(f)
+                    raw_time = data.get("endTime", "")
+                    if raw_time:
+                        # Parse "YYYY-MM-DD" into a date object, format as "Month YYYY"
+                        date_obj = datetime.strptime(raw_time.split("T")[0], "%Y-%m-%d")
+                        month_key = date_obj.strftime("%B %Y")
+
+                        if month_key not in month_data:
+                            month_data[month_key] = []
+                        # Store the directory path to easily delete it later
+                        month_data[month_key].append(root)
+            except Exception:
+                pass
+
+    return month_data
+
+
+def select_month_interactive(month_data):
+    """Displays an interactive menu to select a month using arrow keys."""
+    if not month_data:
+        return None
+
+    months = list(month_data.keys())
+    total_files = sum(len(folders) for folders in month_data.values())
+    options = months + ["All"]
+    if len(months) == 1:
+        print(f"Only found data for {months[0]}. Auto-selecting.")
+        return months[0]
+
+    current_index = 0
+
+    while True:
+        os.system("cls" if os.name == "nt" else "clear")
+        print("")
+        print("-" * 30)
+        print("Solus Ronia Compiler")
+        print("-" * 30)
+        print("")
+        # Optional: keeps the header visible
+        print("Select a month to process (Use UP/DOWN arrows, then ENTER):")
+        print("-" * 30)
+
+        for i, option in enumerate(options):
+            if option == "All":
+                print("")  # Adds the requested space
+                count = total_files
+            else:
+                count = len(month_data[option])
+
+            if i == current_index:
+                print(f" > {option}: {count} result(s)")
+            else:
+                print(f"   {option}: {count} result(s)")
+
+        key = msvcrt.getch()
+
+        # Arrow keys send a double byte: \x00 or \xe0, followed by the key code
+        if key in (b"\x00", b"\xe0"):
+            special_key = msvcrt.getch()
+            if special_key == b"H":  # Up arrow
+                current_index = (current_index - 1) % len(options)
+            elif special_key == b"P":  # Down arrow
+                current_index = (current_index + 1) % len(options)
+        elif key == b"\r":  # Enter key
+            return options[current_index]
+
+
+def purge_unselected_months(month_data, selected_month):
+    """Deletes all folders in Raw Data that do not belong to the selected month."""
+    print(f"Purging files outside of {selected_month}...")
+    print("")
+    for month, folders in month_data.items():
+        if month != selected_month:
+            for folder in folders:
+                if os.path.exists(folder):
+                    shutil.rmtree(folder)
+
+
 ####################################################################################################################################################################
 ####################################################################################################################################################################
 ####################################################################################################################################################################
@@ -305,6 +394,7 @@ def main():
 
         if drive_letter:
             auto_copy_data(drive_letter + "\\", raw_data)
+
         else:
             print("Cannot proceed automatically. Please load files manually.")
             mode = "2"  # Switch to manual mode if drive not found.
@@ -319,6 +409,14 @@ def main():
         ready = input("Continue? [Y]/N: ").strip().lower()
         if ready in ["n", "no"]:
             sys.exit(0)
+
+    month_data = get_available_months(raw_data)
+    if month_data:
+        selected_month = select_month_interactive(month_data)
+        if selected_month and selected_month != "All":
+            purge_unselected_months(month_data, selected_month)
+    else:
+        print("Could not find any valid dates in the copied files.")
 
     print("")
     print("Processing...")
