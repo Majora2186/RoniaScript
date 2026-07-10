@@ -1,5 +1,8 @@
 # Ronia Results Compiler
 
+
+# THIS README REQUIRES UPDATING.
+
 ## What the Script is For
 The Ronia Results Compiler is a Python automation tool designed to streamline the processing of laboratory test results. It automatically compiles individual results into a structured, easily readable master Excel template for downstream analysis.
 
