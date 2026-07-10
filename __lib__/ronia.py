@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Needs updating
-"""
+""" """
 
 import os  # Import os to manipulate files and folders and pandas for Spreadsheets
 import sys
@@ -38,7 +36,7 @@ def github_update():
     if os.path.exists(dev_file_path):
         return
 
-    github_raw_url = "https://raw.githubusercontent.com/Majora2186/RoniaScript/refs/heads/main/Ronia%20Script/ronia.py"
+    github_raw_url = "https://raw.githubusercontent.com/Majora2186/Ronia-Results-Compiler/refs/heads/main/__lib__/ronia.py"
 
     try:
         with urllib.request.urlopen(github_raw_url) as response:
