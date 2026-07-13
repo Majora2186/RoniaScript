@@ -1,34 +1,33 @@
 # NanoFast Results Compiler
 
-
-# THIS README REQUIRES UPDATING.
-
 ## What the Script is For
-The Ronia Results Compiler is a Python automation tool designed to streamline the processing of laboratory test results. It automatically compiles individual results into a structured, easily readable master Excel template for downstream analysis.
+The NanoFast Results Compiler is a Python automation tool designed to streamline the processing and presentation of Nanofast test results. It automatically compiles individual results within a reader or saved locally into a structured, easily readable master Excel template for downstream analysis.
 
 ## How it Works
-1. **Data Scraping:** The script scans the `Raw Data` directory for result folders. For each folder, it opens the target CSV file and its companion `result.json` file.
+1. **Data Scraping:** The script scans data within the `Raw Data` directory or from the Reader device, for result folders. For each folder, it opens the target CSV file and its companion `result.json` file.
 2. **Metadata Extraction:** It pulls specific metadata from the JSON (including Sample ID, Cassette Identifier, Lot Code, Protocol details, Date/Time, and Final Result) and stacks this on top of the CSV raw data.
 3. **Template Injection:** The script creates an excel spreadsheet and pastes the compiled data into the `Raw Data` sheet, assigning one column per test result.
-4. **Batching & Naming:** To prevent template overflow, the script processes results in batches of 40. It dynamically generates output files named with the current date, time, and batch number (e.g., `Compiled Ronia Results - 07 Jul 26 - 15.43 - Part 1.xlsx`).
-5. **Clean Up:** Upon successful completion, the script automatically purges the `Raw Data` folder to ensure it is empty and ready for the next run.
+4. **Batching & Naming:** To prevent template overflow, the script processes results in batches of 40. It dynamically generates output files named with the current date, time, and batch number (e.g., `Compiled NanoFast Results - 07 Jul 26 - 15.43 - Part 1.xlsx`).
+5. **Clean Up:** Upon successful completion, the script is ran locally then copied data is automatically purges the `Raw Data` folder to ensure it is empty and ready for the next run.
 
-## How to Use It
+## How to Install
 ### Prerequisites
-* Ensure Python is installed on your system along with the `pandas` and `openpyxl` libraries.
+* Ensure Python is installed on your system, this can be downloaded from the Microsoft Store.
+* Download the latest release from the GitHub repo, using the releases section of the sidebar.
+* Under the assets section of the releases page, download the .zip file.
+* Extract this .zip into your C: Drive directly (Please note all testing has  been done this way, installation anywhere else is untested and may not work)
 
-
+## How to Use
 ### Execution Steps
-1. Place all individual test result folders (each containing a CSV and `result.json`) into the `Raw Data` folder. Make sure no extra files are added as these will cause the script to fail.
-2. Run the `ronia.py` script using the command prompt or powershell. If you do not know how to do this see the section below.
-3. The script will display a terminal prompt warning you that the `Raw Data` folder will be deleted after processing. Type `Y` and/or press **Enter** to continue.
+1. If processing data from a device, connect the Nanofast reader to the PC using a USB-C cable, power on the reader, and place the device into 'Mass Storage Mode' using the Menu on the reader. If using local data, copy all individual test result folders (each containing a CSV and `result.json`) into the `Raw Data` folder.
+2. Run the `Solus NanoFast Compliler.bat` file by double clicking.
+3. Select the appropriate location for data processing.
+    * Press 1 for Automatic. This automatically sources the results from the device.
+    * Press 2 for Manual. For this option manually copy the results into the folder named `Raw Data`.  
+4. Select the date range for data processing, using the up and down arrows and selecting with Enter.
+3. The script will display a terminal prompt warning you that the `Raw Data` folder will be deleted after processing. Type `Y` and/or press **Enter** to continue. Data stored on a Reader cannot be deleted, this only matters if you have manually transferred files.
 4. The terminal will display progress as it chunks and exports the data.
-5. Once complete, retrieve your newly generated `Compiled Ronia Results` files from the main directory. The `Raw Data` folder will now be empty.
+5. Once complete, retrieve your newly generated `Compiled NanoFast Results` files from the main directory. The `Raw Data` folder will now be empty.
 
-## Troubleshooting
-
-* **Error: "Missing 'result.json' companion file"**
-  * **Cause:** The script found a stray file or an incomplete folder inside the `Raw Data` directory. 
-  * **Fix:** Open the `Raw Data` folder and remove any files that are not valid result folders. Ensure every folder inside contains a `result.json` file.
-
+---
 Script created by Steve Carter in 2026. 
