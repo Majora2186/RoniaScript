@@ -1,41 +1,33 @@
 # -*- coding: utf-8 -*-
 """ """
 
-import os  # Import os to manipulate files and folders and pandas for Spreadsheets
 import sys
-import shutil
-import json  # Brings in Python's standard tool for reading and parsing
-from datetime import (
-    datetime,
-)  # For adding the current date and time to the Compiled NanoFast results spreadsheet
-import pandas as pd
-import glob  # Glob is used to find files with wildcards.
-import urllib.request  # Used to autoupdate
-import subprocess  # Used to search for NanoFast unit.
-import msvcrt  # Used to get single keypress for mode selection.
+import subprocess
 
-# --- Dependency check section ---
-required_packages = [
-    "os",
-    "sys",
-    "shutil",
-    "json",
-    "datetime",
-    "pandas",
-    "glob",
-    "urllib",
-    "subprocess",
-    "msvcrt",
-]
 
-for package in required_packages:
-    try:
-        __import__(package)
-        print(f"✅ {package} is already installed.")
-    except ImportError:
-        print(f"📦 {package} not found. Installing...")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-        print(f"✅ {package} installed successfully.")
+# 1. Dependency Check
+def install_dependencies():
+    packages = ["pandas", "openpyxl"]
+    for package in packages:
+        try:
+            __import__(package)
+        except ImportError:
+            print(f"📦 {package} not found. Installing...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+            print(f"✅ {package} installed successfully.")
+
+
+install_dependencies()
+
+# 2. Now import your heavy libraries
+# These will only run AFTER the installation loop finishes
+import os  # noqa: E402
+import shutil  # noqa: E402
+import json  # noqa: E402
+import glob  # noqa: E402
+import urllib.request  # noqa: E402
+import msvcrt  # noqa: E402
+from datetime import datetime  # noqa: E402
 
 
 def github_update():

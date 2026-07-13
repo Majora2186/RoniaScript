@@ -1,3 +1,3 @@
 @echo off
-python __lib__\ronia.py
+python __lib__\NanoFast.py
 pause
