@@ -1,4 +1,4 @@
-# Ronia Results Compiler
+# NanoFast Results Compiler
 
 
 # THIS README REQUIRES UPDATING.
