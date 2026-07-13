@@ -7,24 +7,35 @@ import shutil
 import json  # Brings in Python's standard tool for reading and parsing
 from datetime import (
     datetime,
-)  # For adding the current date and time to the Compiled Ronia results spreadsheet
+)  # For adding the current date and time to the Compiled NanoFast results spreadsheet
 import pandas as pd
 import glob  # Glob is used to find files with wildcards.
 import urllib.request  # Used to autoupdate
-import subprocess  # Used to search for Ronia unit.
+import subprocess  # Used to search for NanoFast unit.
 import msvcrt  # Used to get single keypress for mode selection.
 
 # --- Dependency check section ---
-# required_packages = ["openpyxl", "os", "sys", "subprocess", "openpyxl", "shutil"]
+required_packages = [
+    "os",
+    "sys",
+    "shutil",
+    "json",
+    "datetime",
+    "pandas",
+    "glob",
+    "urllib",
+    "subprocess",
+    "msvcrt",
+]
 
-# for package in required_packages:
-#     try:
-#         __import__(package)
-#         print(f"✅ {package} is already installed.")
-#     except ImportError:
-#         print(f"📦 {package} not found. Installing...")
-#         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-#         print(f"✅ {package} installed successfully.")
+for package in required_packages:
+    try:
+        __import__(package)
+        print(f"✅ {package} is already installed.")
+    except ImportError:
+        print(f"📦 {package} not found. Installing...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+        print(f"✅ {package} installed successfully.")
 
 
 def github_update():
@@ -36,7 +47,7 @@ def github_update():
     if os.path.exists(dev_file_path):
         return
 
-    github_raw_url = "https://raw.githubusercontent.com/Majora2186/Ronia-Results-Compiler/refs/heads/main/__lib__/ronia.py"
+    github_raw_url = "https://raw.githubusercontent.com/Majora2186/NanoFast-Results-Compiler/refs/heads/main/__lib__/NanoFast.py"
 
     try:
         with urllib.request.urlopen(github_raw_url) as response:
@@ -220,7 +231,7 @@ def process_files(raw_data):
                 protocol_version,
                 lot_code,
             ]
-            # This adds on the Ronia Instrument number from the second json file.
+            # This adds on the NanoFast Instrument number from the second json file.
             json_list.append(factory_data)
             # This converts my python list into a dataframe
             json_df = pd.DataFrame(json_list)
@@ -246,7 +257,7 @@ def export_results(combined_df, template_path, compiled_dir, raw_data):
 
         # 3. Create dynamic filename and path
         batch_filename = (
-            f"Compiled Ronia Results - {current_time} - Part {part_num}.xlsx"
+            f"Compiled NanoFast Results - {current_time} - Part {part_num}.xlsx"
         )
         batch_output_path = os.path.join(compiled_dir, batch_filename)
 
@@ -271,7 +282,7 @@ def export_results(combined_df, template_path, compiled_dir, raw_data):
     print("-" * 30)
     print("")
 
-    # Delete and replace Compiled Ronia Results
+    # Delete and replace Compiled NanoFast Results
     shutil.rmtree(raw_data)
     os.makedirs(raw_data, exist_ok=True)
 
@@ -322,7 +333,7 @@ def select_month_interactive(month_data):
         os.system("cls" if os.name == "nt" else "clear")
         print("")
         print("-" * 30)
-        print("Solus Ronia Compiler")
+        print("Solus NanoFast Compiler")
         print("-" * 30)
         print("")
         # Optional: keeps the header visible
@@ -380,7 +391,7 @@ def main():
     # Start user interaction and processing
     print("")
     print("-" * 30)
-    print("Solus Ronia Compiler")
+    print("Solus NanoFast Compiler")
     print("-" * 30)
     print("")
 
