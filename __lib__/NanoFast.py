@@ -22,36 +22,39 @@ import os  # noqa: E402
 import shutil  # noqa: E402
 import json  # noqa: E402
 import glob  # noqa: E402
-import urllib.request  # noqa: E402
+
+# import urllib.request  # noqa: E402 Not currently used, but retained for potential future use in GitHub update feature.
 import msvcrt  # noqa: E402
 from datetime import datetime  # noqa: E402
 import pandas as pd  # noqa: E402
 
 
-def github_update():
-    """Checks GitHub for script updates."""
-    # Tell the script where to the dev.py file in the same folder.
-    script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    dev_file_path = os.path.join(script_dir, ".dev")
+# Removal of the GitHub update feature due to potential issues with script integrity. The function is retained for reference but is not called in the main execution flow.
+# Users are encouraged to manually check for updates on the GitHub repository.
+# def github_update():
+#     """Checks GitHub for script updates."""
+#     # Tell the script where to the dev.py file in the same folder.
+#     script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#     dev_file_path = os.path.join(script_dir, ".dev")
 
-    if os.path.exists(dev_file_path):
-        return
+#     if os.path.exists(dev_file_path):
+#         return
 
-    github_raw_url = "https://raw.githubusercontent.com/Majora2186/NanoFast-Results-Compiler/refs/heads/main/__lib__/NanoFast.py"
+#     github_raw_url = "https://raw.githubusercontent.com/Majora2186/NanoFast-Results-Compiler/refs/heads/main/__lib__/NanoFast.py"
 
-    try:
-        with urllib.request.urlopen(github_raw_url) as response:
-            latest_code = response.read().decode("utf-8")
+#     try:
+#         with urllib.request.urlopen(github_raw_url) as response:
+#             latest_code = response.read().decode("utf-8")
 
-        with open(__file__, "r", encoding="utf-8") as current_file:
-            current_code = current_file.read()
+#         with open(__file__, "r", encoding="utf-8") as current_file:
+#             current_code = current_file.read()
 
-        if latest_code != current_code:
-            with open(__file__, "w", encoding="utf-8") as current_file:
-                current_file.write(latest_code)
+#         if latest_code != current_code:
+#             with open(__file__, "w", encoding="utf-8") as current_file:
+#                 current_file.write(latest_code)
 
-    except Exception:
-        pass
+#     except Exception:
+#         pass
 
 
 def setup_environment():
@@ -377,7 +380,7 @@ def main():
     os.system("cls" if os.name == "nt" else "clear")
 
     # Updates the script from GitHub if ENABLE_UPDATES is set to True.
-    github_update()
+    # github_update()
 
     # This sets up the environment and creates necessary folders if they don't exist.
     raw_data, template_path, compiled_dir = setup_environment()

@@ -12,10 +12,11 @@ The NanoFast Results Compiler is a Python automation tool designed to streamline
 
 ## How to Install
 ### Prerequisites
-* Ensure Python is installed on your system, this can be downloaded from the Microsoft Store.
+* Install Python *directly from the Microsoft Store*. The script has been tested with `Python 3.13`.
 * Download the latest release from the GitHub repo, using the releases section of the sidebar.
 * Under the assets section of the releases page, download the .zip file.
-* Extract this .zip into your C: Drive directly (Please note all testing has  been done this way, installation anywhere else is untested and may not work)
+### Installation
+* Extract the .zip directly into your C: Drive. Installations elsewhere are not recommended and may result in file path errors.
 
 ## How to Use
 ### Execution Steps
@@ -28,6 +29,9 @@ The NanoFast Results Compiler is a Python automation tool designed to streamline
 3. The script will display a terminal prompt warning you that the `Raw Data` folder will be deleted after processing. Type `Y` and/or press **Enter** to continue. Data stored on a Reader cannot be deleted, this only matters if you have manually transferred files.
 4. The terminal will display progress as it chunks and exports the data.
 5. Once complete, retrieve your newly generated `Compiled NanoFast Results` files from the main directory. The `Raw Data` folder will now be empty.
+
+## Known Issues
+1. Upon first launch, the script successfully installs pandas but fails to initialise in the same session. As a temporary workaround, restarting the script will resolve the issue. This is a known issue scheduled for resolution in an upcoming patch
 
 ---
 Script created by Steve Carter in 2026. 
