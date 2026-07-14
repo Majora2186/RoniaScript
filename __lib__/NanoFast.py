@@ -26,7 +26,6 @@ import urllib.request  # noqa: E402
 import msvcrt  # noqa: E402
 from datetime import datetime  # noqa: E402
 import pandas as pd  # noqa: E402
-import openpyxl  # noqa: E402
 
 
 def github_update():
@@ -373,10 +372,13 @@ def purge_unselected_months(month_data, selected_month):
 
 
 def main():
+
     # This checks if the sysem is windows or linux and clears the script.
     os.system("cls" if os.name == "nt" else "clear")
+
     # Updates the script from GitHub if ENABLE_UPDATES is set to True.
     github_update()
+
     # This sets up the environment and creates necessary folders if they don't exist.
     raw_data, template_path, compiled_dir = setup_environment()
     # Start user interaction and processing
