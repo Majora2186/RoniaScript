@@ -5,7 +5,6 @@ import sys
 import subprocess
 
 
-# 1. Dependency Check
 def install_dependencies():
     packages = ["pandas", "openpyxl"]
     for package in packages:
@@ -19,8 +18,6 @@ def install_dependencies():
 
 install_dependencies()
 
-# 2. Now import your heavy libraries
-# These will only run AFTER the installation loop finishes
 import os  # noqa: E402
 import shutil  # noqa: E402
 import json  # noqa: E402
@@ -28,6 +25,7 @@ import glob  # noqa: E402
 import urllib.request  # noqa: E402
 import msvcrt  # noqa: E402
 from datetime import datetime  # noqa: E402
+import pandas as pd  # noqa: E402
 
 
 def github_update():
@@ -374,10 +372,13 @@ def purge_unselected_months(month_data, selected_month):
 
 
 def main():
+
     # This checks if the sysem is windows or linux and clears the script.
     os.system("cls" if os.name == "nt" else "clear")
+
     # Updates the script from GitHub if ENABLE_UPDATES is set to True.
     github_update()
+
     # This sets up the environment and creates necessary folders if they don't exist.
     raw_data, template_path, compiled_dir = setup_environment()
     # Start user interaction and processing
