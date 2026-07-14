@@ -5,7 +5,6 @@ import sys
 import subprocess
 
 
-# 1. Dependency Check
 def install_dependencies():
     packages = ["pandas", "openpyxl"]
     for package in packages:
@@ -19,8 +18,6 @@ def install_dependencies():
 
 install_dependencies()
 
-# 2. Now import your heavy libraries
-# These will only run AFTER the installation loop finishes
 import os  # noqa: E402
 import shutil  # noqa: E402
 import json  # noqa: E402
@@ -28,6 +25,8 @@ import glob  # noqa: E402
 import urllib.request  # noqa: E402
 import msvcrt  # noqa: E402
 from datetime import datetime  # noqa: E402
+import pandas as pd  # noqa: E402
+import openpyxl  # noqa: E402
 
 
 def github_update():
