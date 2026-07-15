@@ -57,6 +57,61 @@ import pandas as pd  # noqa: E402
 #         pass
 
 
+# Functions.
+def load_languages():
+    """Loads language files from the lang.json file."""
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    lang_path = os.path.join(script_dir, "lang.json")
+
+    with open(lang_path, "r", encoding="utf-8") as file:
+        return json.load(file)
+
+
+def get_user_language():
+    """Checks for a saved language, or prompts the user to select one."""
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    config_path = os.path.join(script_dir, "user_settings.config")
+
+    # 1. If they already picked a language before, read it and use it.
+    if os.path.exists(config_path):
+        with open(config_path, "r") as file:
+            return file.read().strip()
+
+    # 2. If this is their first time running it, ask them.
+    os.system("cls" if os.name == "nt" else "clear")
+    print("")
+    print("-" * 30)
+    print("Solus NanoFast Compiler")
+    print("-" * 30)
+    print("")
+    print("Select Language:")
+    print("")
+    print("[1] English")
+    print("[2] Português - BR")
+    print("[3] Português - PT")
+    print("[4] Español")
+    print("[5] Français")
+
+    options = {"1": "EN", "2": "PT-BR", "3": "PT-PT", "4": "ES", "5": "FR"}
+
+    while True:
+        choice = msvcrt.getch().decode("utf-8")
+        if choice in options:
+            lang = options[choice]
+            break
+
+    # 3. Save their choice so we don't have to ask again tomorrow.
+    with open(config_path, "w") as file:
+        file.write(lang)
+
+    os.system("cls" if os.name == "nt" else "clear")
+    return lang
+
+
+TEXT = load_languages()
+LANGUAGE = get_user_language()
+
+
 def setup_environment():
     """Sets up the necessary folders and files."""
     # 1. This is where the script itself lives (the basement)
@@ -82,7 +137,7 @@ def find_drive_by_name(target_name):
     """Searches connected drives for a specific volume name."""
     # This function uses the Windows Management Instrumentation Command-line (WMIC) to get a list of logical drives
     # and their volume names. It then checks if the target name is present in any of the volume names and returns the corresponding drive letter if found.
-    print(f"\nSearching for drive named '{target_name}'...")
+    print(f"\n{TEXT[LANGUAGE]['drive_search']}{target_name}'...")
     try:
         # Asks Windows for a list of drive letters and their names
         output = subprocess.check_output(
@@ -97,15 +152,15 @@ def find_drive_by_name(target_name):
     except Exception as e:
         print(f"Error searching for drives: {e}")
 
-    print("Drive not found.")
+    print(f"{TEXT[LANGUAGE]['drive_not_found']}")
     return None
 
 
 def get_mode_selection():
     """Prompts the user for Auto/Manual mode via single keypress."""
-    print("Select retrieval mode:")
-    print("[1] Automatic (Retrieve from Instrument Drive)")
-    print("[2] Manual (Files already loaded in Raw Data)")
+    print(TEXT[LANGUAGE]["select_mode"])
+    print(f"[1] {TEXT[LANGUAGE]['auto_opt']}")
+    print(f"[2] {TEXT[LANGUAGE]['manual_opt']}")
 
     while True:
         # getch() pauses the script until a key is pressed
@@ -155,9 +210,9 @@ def process_files(raw_data):
                 excel_files.append(os.path.join(root, file))
 
     if not excel_files:
-        print("No Excel files found in Raw Data.")
+        print(f"{TEXT[LANGUAGE]['no_excel']}")
         print("")
-        print("Stopping Script.")
+        print(f"{TEXT[LANGUAGE]['script_stop']}")
         print("-" * 30)
         sys.exit(0)
 
@@ -283,7 +338,7 @@ def export_results(combined_df, template_path, compiled_dir, raw_data):
 def get_available_months(raw_data):
     """Scans JSON files in Raw Data and groups directories by month."""
     print("")
-    print("Scanning copied files for dates...")
+    print(f"{TEXT[LANGUAGE]['scan_dates']}")
     month_data = {}
 
     for root, dirs, files in os.walk(raw_data):
@@ -385,9 +440,9 @@ def main():
     # This sets up the environment and creates necessary folders if they don't exist.
     raw_data, template_path, compiled_dir = setup_environment()
     # Start user interaction and processing
-    print("")
+    # print("")
     print("-" * 30)
-    print("Solus NanoFast Compiler")
+    print(TEXT[LANGUAGE]["welcome"])
     print("-" * 30)
     print("")
 
@@ -398,20 +453,19 @@ def main():
         drive_letter = find_drive_by_name(target_drive_name)
 
         if drive_letter:
+            print(f"{TEXT[LANGUAGE]['drive_found']}{drive_letter}:\\")
             auto_copy_data(drive_letter + "\\", raw_data)
 
         else:
-            print("Cannot proceed automatically. Please load files manually.")
+            print(f"{TEXT[LANGUAGE]['cannot_proceed']}")
             mode = "2"  # Switch to manual mode if drive not found.
     else:
-        print("\nManual mode selected. Ensure files are in Raw Data.")
+        print("\n" + TEXT[LANGUAGE]["man_mode_selected"])
 
     if mode == "2":
-        print(
-            "\nWARNING: All files in Raw Data will be permanently DELETED after processing."
-        )
+        print(f"\n{TEXT[LANGUAGE]['warning_delete']}")
         # We can keep a simple standard input here just to confirm they are ready to nuke the folder
-        ready = input("Continue? [Y]/N: ").strip().lower()
+        ready = input(f"{TEXT[LANGUAGE]['continue_prompt']}").strip().lower()
         if ready in ["n", "no"]:
             sys.exit(0)
 
@@ -421,10 +475,10 @@ def main():
         if selected_month and selected_month != "All":
             purge_unselected_months(month_data, selected_month)
     else:
-        print("Could not find any valid dates in the copied files.")
+        print(f"{TEXT[LANGUAGE]['no_valid_date']}")
 
     print("")
-    print("Processing...")
+    print(f"{TEXT[LANGUAGE]['processing']}")
     print("")
 
     cleanup(raw_data)

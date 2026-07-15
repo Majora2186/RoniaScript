@@ -18,6 +18,11 @@ The NanoFast Results Compiler is a Python automation tool designed to streamline
 ### Installation
 * Extract the .zip directly into your C: Drive. Installations elsewhere are not recommended and may result in file path errors.
 
+### First run
+* On first use the script automatically downloads required dependencies. Please allow this process to complete.
+* Following package installation, you will be prompted to select your preferred language. 
+* Subsequent launches will bypass this setup phase and proceed directly to the compiler.
+
 ## How to Use
 ### Execution Steps
 1. If processing data from a device, connect the Nanofast reader to the PC using a USB-C cable, power on the reader, and place the device into 'Mass Storage Mode' using the Menu on the reader. If using local data, copy all individual test result folders (each containing a CSV and `result.json`) into the `Raw Data` folder.
