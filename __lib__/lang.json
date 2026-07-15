@@ -17,7 +17,7 @@
     "no_excel": "No Excel files found in Raw Data. Please ensure the files are present and try again.",
     "complete": "Process complete. Script closing.",
     "script_stop": "Stopping Script.",
-    "translation_notice": "Translations by Google. Please feedback translation on GitHub. Apologies for any errors."
+    "translation_notice": ""
   },
   "PT-BR": {
   "package_not_found": "não encontrado. Instalando...",
