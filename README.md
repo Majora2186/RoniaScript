@@ -1,6 +1,6 @@
 # NanoFast Results Compiler
 
-🌐 Read this in: [English](README.md) | [Português (Brasil)](README.pt-br.md) | [Português (Portugal)](README.pt-pt.md) | [Español](README.es.md) | [Français](README.fr.md)
+🌐 Read this in: [English](README.md) | [Português (Brasil)](International%20Readmes/README.pt-br.md) | [Português (Portugal)](International%20Readmes/README.pt-pt.md) | [Español](International%20Readmes/README.es.md) | [Français](International%20Readmes/README.fr.md)
 
 ## What the Script is For
 The NanoFast Results Compiler is a Python automation tool designed to streamline the processing and presentation of Nanofast test results. It automatically compiles individual results within a reader or saved locally into a structured, easily readable master Excel template for downstream analysis.

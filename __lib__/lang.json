@@ -30,7 +30,10 @@
     "only_found": "Only found data for {}. Auto-selecting. ",
     "select_month": "Select a month to process (or 'All' for all months): ",
     "purge": "Purging files outside of {}...",
-    "total_processed": "Total files processed: {}"
+    "total_processed": "Total files processed: {}",
+    "select_week": "Select a week to process (or 'All'): ",
+    "select_day": "Select a day to process (or 'All'): ",
+    "back_btn": "Back"
   },
   "PT-BR": {
   "package_not_found": "não encontrado. Instalando...",
@@ -64,7 +67,10 @@
   "only_found": "Apenas encontrado dados para {}. Seleção automática.",
   "select_month": "Selecione um mês para processar (ou 'All' para todos os meses): ",
   "purge": "Limpando arquivos fora de {}...",
-  "total_processed": "Total de arquivos processados: {}"
+  "total_processed": "Total de arquivos processados: {}",
+  "select_week": "Selecione uma semana para processar (ou 'All'): ",
+  "select_day": "Selecione um dia para processar (ou 'All'): ",
+  "back_btn": "Voltar"
 },
 "PT-PT": {
   "package_not_found": "não encontrado. A instalar...",
@@ -98,7 +104,10 @@
   "only_found": "Apenas encontrado dados para {}. Seleção automática.",
   "select_month": "Selecione um mês para processar (ou 'All' para todos os meses): ",
   "purge": "A limpar ficheiros fora de {}...",
-  "total_processed": "Total de ficheiros processados: {}"
+  "total_processed": "Total de ficheiros processados: {}",
+  "select_week": "Selecione uma semana para processar (ou 'All'): ",
+  "select_day": "Selecione um dia para processar (ou 'All'): ",
+  "back_btn": "Costas"
 },
 "ES": {
   "package_not_found": "no encontrado. Instalando...",
@@ -132,7 +141,10 @@
   "only_found": "Solo se encontraron datos para {}. Selección automática.",
   "select_month": "Seleccione un mes para procesar (o 'All' para todos los meses): ",
   "purge": "Eliminando archivos fuera de {}...",
-  "total_processed": "Total de archivos procesados: {}"
+  "total_processed": "Total de archivos procesados: {}",
+  "select_week": "Seleccione una semana para procesar (o 'All'): ",
+  "select_day": "Seleccione un día para procesar (o 'All'): ",
+  "back_btn": "Atrás"
 },
 "FR": {
   "package_not_found": "introuvable. Installation en cours...",
@@ -166,6 +178,9 @@
   "only_found": "Données trouvées uniquement pour {}. Sélection automatique.",
   "select_month": "Sélectionnez un mois à traiter (ou 'All' pour tous les mois) : ",
   "purge": "Suppression des fichiers en dehors de {}...",
-  "total_processed": "Nombre total de fichiers traités : {}"
+  "total_processed": "Nombre total de fichiers traités : {}",
+  "select_week": "Sélectionnez une semaine à traiter (ou 'All') : ",
+  "select_day": "Sélectionnez un jour à traiter (ou 'All') : ",
+  "back_btn": "Dos"
 }
 }
