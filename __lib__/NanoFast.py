@@ -447,6 +447,7 @@ def main():
     if mode == "2":
         print(f"\n{TEXT[LANGUAGE]['warning_delete']}")
         # We can keep a simple standard input here just to confirm they are ready to nuke the folder
+        # I need to improve this to account for any other characters. For example pressing 1 here proceeds.
         ready = input(f"{TEXT[LANGUAGE]['continue_prompt']}").strip().lower()
         if ready in ["n", "no", "non", "não", "nao"]:
             sys.exit(0)
