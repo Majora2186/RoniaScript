@@ -7,6 +7,7 @@ import subprocess
 
 def install_dependencies():
     packages = ["pandas", "openpyxl"]
+    needs_restart = False
     for package in packages:
         try:
             __import__(package)
@@ -14,6 +15,11 @@ def install_dependencies():
             print(f"📦 {package} not found. Installing...")
             subprocess.check_call([sys.executable, "-m", "pip", "install", package])
             print(f"✅ {package} installed successfully.")
+            needs_restart = True
+
+    if needs_restart:
+        print("🔄 Initializing new packages... Restarting script.")
+        os.execv(sys.executable, [sys.executable] + sys.argv)
 
 
 install_dependencies()
@@ -47,7 +53,7 @@ def get_user_language():
     # 1. If they already picked a language before, read it and use it.
     if os.path.exists(config_path):
         with open(config_path, "r") as file:
-            return file.read().strip()
+            return file.read().strip().split("=")[-1]
 
     # 2. If this is their first time running it, ask them.
     os.system("cls" if os.name == "nt" else "clear")
@@ -72,9 +78,9 @@ def get_user_language():
             lang = options[choice]
             break
 
-    # 3. Save their choice so we don't have to ask again tomorrow.
+    # 3. Save their choice so we don't have to ask again.
     with open(config_path, "w") as file:
-        file.write(lang)
+        file.write(f"LANGUAGE={lang}")
 
     os.system("cls" if os.name == "nt" else "clear")
     return lang
@@ -296,6 +302,10 @@ def export_results(combined_df, template_path, compiled_dir, raw_data):
             )
     print("")
     print(f"{TEXT[LANGUAGE]['process_complete']}")
+    notice = TEXT[LANGUAGE].get("translation_notice", "")
+    if notice:
+        print("")
+        print(notice)
     print(f"{TEXT[LANGUAGE]['script_close']}")
     print("")
     # print("Created by Steve Carter.")
