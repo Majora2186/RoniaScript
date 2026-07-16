@@ -29,34 +29,6 @@ from datetime import datetime  # noqa: E402
 import pandas as pd  # noqa: E402
 
 
-# Removal of the GitHub update feature due to potential issues with script integrity. The function is retained for reference but is not called in the main execution flow.
-# Users are encouraged to manually check for updates on the GitHub repository.
-# def github_update():
-#     """Checks GitHub for script updates."""
-#     # Tell the script where to the dev.py file in the same folder.
-#     script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-#     dev_file_path = os.path.join(script_dir, ".dev")
-
-#     if os.path.exists(dev_file_path):
-#         return
-
-#     github_raw_url = "https://raw.githubusercontent.com/Majora2186/NanoFast-Results-Compiler/refs/heads/main/__lib__/NanoFast.py"
-
-#     try:
-#         with urllib.request.urlopen(github_raw_url) as response:
-#             latest_code = response.read().decode("utf-8")
-
-#         with open(__file__, "r", encoding="utf-8") as current_file:
-#             current_code = current_file.read()
-
-#         if latest_code != current_code:
-#             with open(__file__, "w", encoding="utf-8") as current_file:
-#                 current_file.write(latest_code)
-
-#     except Exception:
-#         pass
-
-
 # Functions.
 def load_languages():
     """Loads language files from the lang.json file."""
@@ -147,10 +119,10 @@ def find_drive_by_name(target_name):
             if target_name.lower() in line.lower():
                 # Splits the line and grabs the first part (e.g., "E:")
                 drive_letter = line.split()[0]
-                print(f"Drive found at {drive_letter}")
+                print(f"{TEXT[LANGUAGE]['drive_found']}{drive_letter}")
                 return drive_letter
     except Exception as e:
-        print(f"Error searching for drives: {e}")
+        print(f"{TEXT[LANGUAGE]['drive_search_error']}{e}")
 
     print(f"{TEXT[LANGUAGE]['drive_not_found']}")
     return None
@@ -175,10 +147,10 @@ def get_mode_selection():
 
 def auto_copy_data(drive_letter, raw_data):
     """Copies all contents from the target drive to Raw Data."""
-    print("Copying files to Raw Data...")
+    print(f"{TEXT[LANGUAGE]['copy_file']}")
     # shutil.copytree requires the destination to not exist, or dirs_exist_ok=True
     shutil.copytree(drive_letter, raw_data, dirs_exist_ok=True)
-    print("Copy complete.")
+    print(f"{TEXT[LANGUAGE]['copy_complete']}")
 
 
 def cleanup(raw_data):
@@ -231,10 +203,10 @@ def process_files(raw_data):
         if not os.path.exists(json_path):
             print("")
             print("")
-            print(f"Stray file found in: {os.path.dirname(file_path)}")
+            print(f"{TEXT[LANGUAGE]['stray_file']}{os.path.dirname(file_path)}")
             print("")
-            print("Please clear 'Raw Data' of invalid files and try again.")
-            print("Safely exiting script.")
+            print(f"{TEXT[LANGUAGE]['invalid_file']}")
+            print(f"{TEXT[LANGUAGE]['safe_exit']}")
             print("-" * 30)
             sys.exit(1)
         # Open file and give python the ability to read it.
@@ -300,7 +272,7 @@ def export_results(combined_df, template_path, compiled_dir, raw_data):
     # 2. Loop through the results in chunks of 40
     for i in range(0, total_results, 40):
         part_num = (i // 40) + 1
-        print(f"Exporting to Excel {part_num}/{total_parts}.")
+        print(f"{TEXT[LANGUAGE]['export_excel']} {part_num}/{total_parts}.")
         chunk_df = combined_df.iloc[:, i : i + 40]
 
         # 3. Create dynamic filename and path
@@ -323,8 +295,8 @@ def export_results(combined_df, template_path, compiled_dir, raw_data):
                 header=False,
             )
     print("")
-    print("Process complete.")
-    print("Script closing.")
+    print(f"{TEXT[LANGUAGE]['process_complete']}")
+    print(f"{TEXT[LANGUAGE]['script_close']}")
     print("")
     # print("Created by Steve Carter.")
     print("-" * 30)
@@ -372,7 +344,7 @@ def select_month_interactive(month_data):
     total_files = sum(len(folders) for folders in month_data.values())
     options = months + ["All"]
     if len(months) == 1:
-        print(f"Only found data for {months[0]}. Auto-selecting.")
+        print(TEXT[LANGUAGE]["only_found"].format(months[0]))
         return months[0]
 
     current_index = 0
@@ -381,11 +353,11 @@ def select_month_interactive(month_data):
         os.system("cls" if os.name == "nt" else "clear")
         print("")
         print("-" * 30)
-        print("Solus NanoFast Compiler")
+        print(TEXT[LANGUAGE]["welcome"])
         print("-" * 30)
         print("")
         # Optional: keeps the header visible
-        print("Select a month to process (Use UP/DOWN arrows, then ENTER):")
+        print(TEXT[LANGUAGE]["select_month"])
         print("-" * 30)
 
         for i, option in enumerate(options):
@@ -415,7 +387,7 @@ def select_month_interactive(month_data):
 
 def purge_unselected_months(month_data, selected_month):
     """Deletes all folders in Raw Data that do not belong to the selected month."""
-    print(f"Purging files outside of {selected_month}...")
+    print(f"{TEXT[LANGUAGE]['purge'].format(selected_month)}")
     print("")
     for month, folders in month_data.items():
         if month != selected_month:
@@ -466,7 +438,7 @@ def main():
         print(f"\n{TEXT[LANGUAGE]['warning_delete']}")
         # We can keep a simple standard input here just to confirm they are ready to nuke the folder
         ready = input(f"{TEXT[LANGUAGE]['continue_prompt']}").strip().lower()
-        if ready in ["n", "no"]:
+        if ready in ["n", "no", "non", "não", "nao"]:
             sys.exit(0)
 
     month_data = get_available_months(raw_data)
@@ -484,7 +456,7 @@ def main():
     cleanup(raw_data)
     combined_df, total_files = process_files(raw_data)
     print("")
-    print(f"\nTotal spreadsheets processed: {total_files}")
+    print(f"\n{TEXT[LANGUAGE]['total_processed'].format(total_files)}")
     print("")
     print("-" * 30)
     export_results(combined_df, template_path, compiled_dir, raw_data)
