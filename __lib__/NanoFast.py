@@ -3,6 +3,12 @@
 
 import sys
 import subprocess
+import os
+import shutil
+import json
+import glob
+import msvcrt
+from datetime import datetime
 
 
 def install_dependencies():
@@ -24,14 +30,7 @@ def install_dependencies():
 
 install_dependencies()
 
-import os  # noqa: E402
-import shutil  # noqa: E402
-import json  # noqa: E402
-import glob  # noqa: E402
 
-# import urllib.request  # noqa: E402 Not currently used, but retained for potential future use in GitHub update feature.
-import msvcrt  # noqa: E402
-from datetime import datetime  # noqa: E402
 import pandas as pd  # noqa: E402
 
 
