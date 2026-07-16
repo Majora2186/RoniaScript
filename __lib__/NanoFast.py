@@ -25,7 +25,8 @@ def install_dependencies():
 
     if needs_restart:
         print("🔄 Initializing new packages... Restarting script.")
-        os.execv(sys.executable, [sys.executable] + sys.argv)
+        subprocess.run([sys.executable] + sys.argv)
+        sys.exit(0)
 
 
 install_dependencies()
