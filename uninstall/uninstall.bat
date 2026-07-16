@@ -1,4 +1,6 @@
 @echo off
+choice /C YN /M "Are you sure you want to uninstall NanoFast and delete all files?"
+if errorlevel 2 exit
 echo Uninstalling NanoFast dependencies...
 python -m pip uninstall -y pandas openpyxl numpy python-dateutil six tzdata et_xmlfile
 
