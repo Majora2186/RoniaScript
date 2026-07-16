@@ -302,8 +302,8 @@ def export_results(combined_df, template_path, compiled_dir, raw_data):
             )
     print("")
     print(f"{TEXT[LANGUAGE]['process_complete']}")
-    notice = TEXT[LANGUAGE].get("translation_notice", "")
-    if notice:
+    notice = TEXT[LANGUAGE].get("translation_notice", "").strip()
+    if notice and LANGUAGE != "EN":
         print("")
         print(notice)
     print(f"{TEXT[LANGUAGE]['script_close']}")
@@ -317,11 +317,10 @@ def export_results(combined_df, template_path, compiled_dir, raw_data):
     os.makedirs(raw_data, exist_ok=True)
 
 
-def get_available_months(raw_data):
-    """Scans JSON files in Raw Data and groups directories by month."""
-    print("")
-    print(f"{TEXT[LANGUAGE]['scan_dates']}")
-    month_data = {}
+def get_date_hierarchy(raw_data):
+    """Scans JSON files and builds a Month -> Week -> Day hierarchy."""
+    print(f"\n{TEXT[LANGUAGE]['scan_dates']}")
+    hierarchy = {}
 
     for root, dirs, files in os.walk(raw_data):
         if "result.json" in files:
@@ -331,79 +330,144 @@ def get_available_months(raw_data):
                     data = json.load(f)
                     raw_time = data.get("endTime", "")
                     if raw_time:
-                        # Parse "YYYY-MM-DD" into a date object, format as "Month YYYY"
                         date_obj = datetime.strptime(raw_time.split("T")[0], "%Y-%m-%d")
-                        month_key = date_obj.strftime("%B %Y")
 
-                        if month_key not in month_data:
-                            month_data[month_key] = []
-                        # Store the directory path to easily delete it later
-                        month_data[month_key].append(root)
+                        month_key = date_obj.strftime("%B %Y")
+                        # ISO Calendar extracts the exact week number. We pad it with a zero (e.g. Week 02) for clean sorting.
+                        week_key = f"Week {date_obj.isocalendar()[1]:02d}"
+                        day_key = date_obj.strftime("%d %b %Y")
+
+                        # Build the nested dictionary tree safely
+                        if month_key not in hierarchy:
+                            hierarchy[month_key] = {}
+                        if week_key not in hierarchy[month_key]:
+                            hierarchy[month_key][week_key] = {}
+                        if day_key not in hierarchy[month_key][week_key]:
+                            hierarchy[month_key][week_key][day_key] = []
+
+                        hierarchy[month_key][week_key][day_key].append(root)
             except Exception:
                 pass
+    return hierarchy
 
-    return month_data
+
+def count_files_in_node(node):
+    """Recursively counts files in a dictionary hierarchy."""
+    if isinstance(node, list):
+        return len(node)
+    return sum(count_files_in_node(child) for child in node.values())
 
 
-def select_month_interactive(month_data):
-    """Displays an interactive menu to select a month using arrow keys."""
-    if not month_data:
-        return None
+def get_all_paths_in_node(node):
+    """Recursively extracts all file paths from a dictionary hierarchy."""
+    if isinstance(node, list):
+        return node
+    paths = []
+    for child in node.values():
+        paths.extend(get_all_paths_in_node(child))
+    return paths
 
-    months = list(month_data.keys())
-    total_files = sum(len(folders) for folders in month_data.values())
-    options = months + ["All"]
-    if len(months) == 1:
-        print(TEXT[LANGUAGE]["only_found"].format(months[0]))
-        return months[0]
 
+def run_interactive_menu(options_list, data_node, prompt_key):
+    """Generic interactive menu for selecting options."""
+    options = options_list + ["All", "Back"]
+    total_files = count_files_in_node(data_node)
     current_index = 0
 
     while True:
         os.system("cls" if os.name == "nt" else "clear")
-        print("")
-        print("-" * 30)
-        print(TEXT[LANGUAGE]["welcome"])
-        print("-" * 30)
-        print("")
-        # Optional: keeps the header visible
-        print(TEXT[LANGUAGE]["select_month"])
+        print(f"\n{'-' * 30}\n{TEXT[LANGUAGE]['welcome']}\n{'-' * 30}\n")
+        print(TEXT[LANGUAGE][prompt_key])
         print("-" * 30)
 
         for i, option in enumerate(options):
-            if option == "All":
-                print("")  # Adds the requested space
-                count = total_files
-            else:
-                count = len(month_data[option])
+            # This handles the blank line spacing you requested
+            if option in ["All", "Back"]:
+                print("")
 
-            if i == current_index:
-                print(f" > {option}: {count} result(s)")
+            cursor = " > " if i == current_index else "   "
+
+            if option == "All":
+                print(f"{cursor}All: {total_files} result(s)")
+            elif option == "Back":
+                print(f"{cursor}{TEXT[LANGUAGE]['back_btn']}")
             else:
-                print(f"   {option}: {count} result(s)")
+                count = count_files_in_node(data_node[option])
+                print(f"{cursor}{option}: {count} result(s)")
 
         key = msvcrt.getch()
-
-        # Arrow keys send a double byte: \x00 or \xe0, followed by the key code
         if key in (b"\x00", b"\xe0"):
             special_key = msvcrt.getch()
-            if special_key == b"H":  # Up arrow
+            if special_key == b"H":  # Up
                 current_index = (current_index - 1) % len(options)
-            elif special_key == b"P":  # Down arrow
+            elif special_key == b"P":  # Down
                 current_index = (current_index + 1) % len(options)
-        elif key == b"\r":  # Enter key
+        elif key == b"\r":  # Enter
             return options[current_index]
 
 
-def purge_unselected_months(month_data, selected_month):
-    """Deletes all folders in Raw Data that do not belong to the selected month."""
-    print(f"{TEXT[LANGUAGE]['purge'].format(selected_month)}")
+def select_from_hierarchy(hierarchy):
+    """Handles multi-level selection (Month -> Week -> Day) with Back navigation."""
+    if not hierarchy:
+        return None, None
+
+    level = 0
+    selected_month = None
+    selected_week = None
+
+    while True:
+        if level == 0:
+            months = list(hierarchy.keys())
+            months.sort(key=lambda x: datetime.strptime(x, "%B %Y"), reverse=True)
+            choice = run_interactive_menu(months, hierarchy, "select_month")
+
+            if choice == "Back":
+                return (
+                    None,
+                    None,
+                )  # Hitting Back at the very top level cancels the process
+            elif choice == "All":
+                return get_all_paths_in_node(hierarchy), "All"
+            else:
+                selected_month = choice
+                level = 1
+
+        elif level == 1:
+            week_node = hierarchy[selected_month]
+            weeks = list(week_node.keys())
+            weeks.sort(reverse=True)
+            choice = run_interactive_menu(weeks, week_node, "select_week")
+
+            if choice == "Back":
+                level = 0
+            elif choice == "All":
+                return get_all_paths_in_node(week_node), selected_month
+            else:
+                selected_week = choice
+                level = 2
+
+        elif level == 2:
+            day_node = week_node[selected_week]
+            days = list(day_node.keys())
+            days.sort(key=lambda x: datetime.strptime(x, "%d %b %Y"), reverse=True)
+            choice = run_interactive_menu(days, day_node, "select_day")
+
+            if choice == "Back":
+                level = 1
+            elif choice == "All":
+                return get_all_paths_in_node(day_node), selected_week
+            else:
+                return day_node[choice], choice
+
+
+def purge_unselected_paths(all_paths, keep_paths, selection_name):
+    """Deletes all folders in Raw Data that were not selected."""
+    print(f"{TEXT[LANGUAGE]['purge'].format(selection_name)}")
     print("")
-    for month, folders in month_data.items():
-        if month != selected_month:
-            for folder in folders:
-                if os.path.exists(folder):
-                    shutil.rmtree(folder)
+    keep_set = set(keep_paths)
+    for path in all_paths:
+        if path not in keep_set and os.path.exists(path):
+            shutil.rmtree(path)
 
 
 ####################################################################################################################################################################
@@ -452,11 +516,18 @@ def main():
         if ready in ["n", "no", "non", "não", "nao"]:
             sys.exit(0)
 
-    month_data = get_available_months(raw_data)
-    if month_data:
-        selected_month = select_month_interactive(month_data)
-        if selected_month and selected_month != "All":
-            purge_unselected_months(month_data, selected_month)
+    hierarchy = get_date_hierarchy(raw_data)
+    if hierarchy:
+        keep_paths, selection_name = select_from_hierarchy(hierarchy)
+
+        if keep_paths is None:
+            # Safely exit if the user backed out entirely
+            print(f"\n{TEXT[LANGUAGE]['safe_exit']}")
+            sys.exit(0)
+
+        elif selection_name != "All":
+            all_paths = get_all_paths_in_node(hierarchy)
+            purge_unselected_paths(all_paths, keep_paths, selection_name)
     else:
         print(f"{TEXT[LANGUAGE]['no_valid_date']}")
 
