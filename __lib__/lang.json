@@ -20,7 +20,7 @@
     "complete": "Process complete. Script closing.",
     "safe_exit": "Safely exiting script.",
     "script_stop": "Stopping Script.",
-    "translation_notice": "",
+    "translation_notice": "Translations done by Google. Please submit feedback on the translation on GitHub. We apologize for any errors.",
     "drive_search_error": "Error searching for drives: ",
     "copy_file": "Copying files to Raw Data...",
     "copy_complete": "Copy complete.",
